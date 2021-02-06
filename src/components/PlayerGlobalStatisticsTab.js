@@ -33,12 +33,6 @@ export default function PlayerGlobalStatisticsTab(props) {
                     </Paper>
                 </Grid>
                 <Grid item md>
-                    <Paper elevation={3} style={{minHeight: 95}}>
-                        <div style={{textAlign: 'center', fontSize: '1rem', paddingTop: 10, minHeight: 30}}>Попаданий в голову</div>
-                        <div style={{textAlign: 'center', fontSize: '2rem', fontWeight: 'bold'}}>{statistics.headshots}</div>
-                    </Paper>
-                </Grid>
-                <Grid item md>
                     <Paper elevation={3} style={{minHeight: 95, ...(statistics.isGoodAverageHeadshots ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'}), }}>
                         <div style={{textAlign: 'center', fontSize: '0.65rem', paddingTop: 10, minHeight: 30}}>Средний процент попаданий в голову</div>
                         <div style={{textAlign: 'center', fontSize: '2rem', fontWeight: 'bold'}}>{statistics.averageHeadshots}%</div>

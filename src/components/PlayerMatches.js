@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -14,6 +14,117 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import TableHead from "@material-ui/core/TableHead";
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import {Collapse} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+
+function Row(props) {
+    const {map} = props;
+    const [open, setOpen] = useState(false);
+
+    return (
+        <React.Fragment>
+            <TableRow key={map.id} style={{maxHeight: 40}}>
+                <TableCell>
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                <TableCell component="th" scope="row" align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
+                    {map.finishedAt}
+                </TableCell>
+                <TableCell align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
+                    {map.map}
+                </TableCell>
+                <TableCell align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
+                    {map.score}
+                </TableCell>
+                <TableCell align="center">
+                    {map.requestedPlayer.kills} - {map.requestedPlayer.assists} - {map.requestedPlayer.deaths}
+                </TableCell>
+                <TableCell align="center">
+                    {map.requestedPlayer.headshots} ({map.requestedPlayer.headshotsPercentage}%)
+                </TableCell>
+                <TableCell align="center">
+                    {map.requestedPlayer.tripleKills} / {map.requestedPlayer.quadroKills} / {map.requestedPlayer.pentaKills}
+                </TableCell>
+                <TableCell align="center">
+                    {map.requestedPlayer.mvps}
+                </TableCell>
+                <TableCell align="center" style={{...(map.requestedPlayer.isGoodKdRatio ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'}), fontWeight: 'bold'}}>
+                    {map.requestedPlayer.kdRatio}
+                </TableCell>
+                <TableCell align="center" style={{...(map.requestedPlayer.isGoodKrRatio ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'}), fontWeight: 'bold'}}>
+                    {map.requestedPlayer.krRatio}
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box margin={1}>
+                            {map.teams.map((team) => (
+                                <TeamTable key={team.id} team={team}/>
+                            ))}
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </React.Fragment>
+    );
+}
+
+function TeamTable(props) {
+    const {team} = props;
+
+    return (
+        <React.Fragment>
+            <div style={{backgroundColor: 'rgba(64, 64, 64, 0.87)'}}>
+                    <Grid container>
+                        <Grid item xs={3} style={{paddingLeft: 50, paddingTop: 10}}>
+                            <Typography variant="h6" gutterBottom component="div" style={{color: 'rgb(225, 255, 255)'}}>
+                                {team.name}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={6}/>
+                        <Grid item xs={3} style={{paddingLeft: 50, paddingTop: 10}}>
+                            <Typography variant="h6" gutterBottom component="div" style={{color: 'rgb(225, 255, 255)'}}>
+                                Раунды: {team.finalRounds} ({team.firstHalfRounds} / {team.secondHalfRounds} / {team.overtimeRounds})
+                            </Typography>
+                        </Grid>
+                    </Grid>
+            </div>
+            <Table size="small" width="100%" aria-label="purchases">
+                <TableHead style={{backgroundColor: 'rgb(225, 255, 255)'}}>
+                    <TableRow>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>Ник</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>K-A-D</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>В голову (% в голову)</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>3x / 4x /5x убийств</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>MVPs</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>K/D Рейтинг</TableCell>
+                        <TableCell align="center" style={{color: 'black', fontWeight: 'bold'}}>K/R Рейтинг</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {team.players.map((player) => (
+                        <TableRow>
+                            <TableCell align="center">{player.nickname}</TableCell>
+                            <TableCell align="center">{player.kills}-{player.assists}-{player.deaths}</TableCell>
+                            <TableCell align="center">{player.tripleKills} / {player.quadroKills} / {player.pentaKills}</TableCell>
+                            <TableCell align="center">{player.headshots} ({player.headshotsPercentage}%)</TableCell>
+                            <TableCell align="center">{player.mvps}</TableCell>
+                            <TableCell align="center">{player.kdRatio}</TableCell>
+                            <TableCell align="center">{player.krRatio}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </React.Fragment>
+    )
+}
 
 export default function PlayerMatches(props) {
     const matches = props.matches;
@@ -29,6 +140,7 @@ export default function PlayerMatches(props) {
             <Table style={{minWidth: 500}} aria-label="pagination table">
                 <TableHead style={{backgroundColor: '#3F51B5'}}>
                     <TableRow>
+                        <TableCell width={20} align="center" style={{color: 'rgb(225,255,255)', fontSize: 12}}/>
                         <TableCell align="center" style={{color: 'rgb(225,255,255)', fontSize: 12}}>Дата</TableCell>
                         <TableCell align="center" style={{color: 'rgb(225,255,255)', fontSize: 12}}>Карта</TableCell>
                         <TableCell align="center" style={{color: 'rgb(225,255,255)', fontSize: 12}}>Счет карты</TableCell>
@@ -42,35 +154,7 @@ export default function PlayerMatches(props) {
                 </TableHead>
                 <TableBody>
                     {matches.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((map) => (
-                        <TableRow key={map.finishedAt}>
-                            <TableCell component="th" scope="row" align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
-                                {map.finishedAt}
-                            </TableCell>
-                            <TableCell align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
-                                {map.map}
-                            </TableCell>
-                            <TableCell align="center" style={{...(map.isWin ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'})}}>
-                                {map.score}
-                            </TableCell>
-                            <TableCell align="center">
-                                {map.kills} - {map.assists} - {map.deaths}
-                            </TableCell>
-                            <TableCell align="center">
-                                {map.headshots} ({map.headshotsPercentage}%)
-                            </TableCell>
-                            <TableCell align="center">
-                                {map.tripleKills} / {map.quadroKills} / {map.pentaKills}
-                            </TableCell>
-                            <TableCell align="center">
-                                {map.mvps}
-                            </TableCell>
-                            <TableCell align="center" style={{...(map.isGoodKdRatio ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'}), fontWeight: 'bold'}}>
-                                {map.kdRatio}
-                            </TableCell>
-                            <TableCell align="center" style={{...(map.isGoodKrRatio ? {backgroundColor: 'rgba(72, 245, 66, 0.3)'} : {backgroundColor: 'rgba(247, 52, 52, 0.3)'}), fontWeight: 'bold'}}>
-                                {map.krRatio}
-                            </TableCell>
-                        </TableRow>
+                        <Row key={map.id} map={map}/>
                     ))}
                 </TableBody>
                 <TableFooter>
