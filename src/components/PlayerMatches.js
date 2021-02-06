@@ -113,8 +113,8 @@ function TeamTable(props) {
                         <TableRow>
                             <TableCell align="center">{player.nickname}</TableCell>
                             <TableCell align="center">{player.kills}-{player.assists}-{player.deaths}</TableCell>
-                            <TableCell align="center">{player.tripleKills} / {player.quadroKills} / {player.pentaKills}</TableCell>
                             <TableCell align="center">{player.headshots} ({player.headshotsPercentage}%)</TableCell>
+                            <TableCell align="center">{player.tripleKills} / {player.quadroKills} / {player.pentaKills}</TableCell>
                             <TableCell align="center">{player.mvps}</TableCell>
                             <TableCell align="center">{player.kdRatio}</TableCell>
                             <TableCell align="center">{player.krRatio}</TableCell>
